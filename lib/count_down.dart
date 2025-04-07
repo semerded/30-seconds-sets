@@ -17,16 +17,14 @@ class CountDown extends StatefulWidget {
 
 class _CountDownState extends State<CountDown> {
   TimerState timerState = TimerState.stopped;
-  int setTime = 10;
-  int restTime = 7;
+  int setTime = 30;
+  int restTime = 10;
   late int currentActiveTime;
   late final TimerHandler setTimer;
   late final TimerHandler restTimer;
   late TimerHandler currentActiveTimer;
   bool isRestPause = false;
   int setCount = 1;
-
-  void finalCountdown() {}
 
   @override
   void initState() {
@@ -41,7 +39,7 @@ class _CountDownState extends State<CountDown> {
           setCount++;
         }
       });
-    }, () => finalCountdown);
+    });
 
     restTimer = TimerHandler(restTime, (isDone) {
       setState(() {
@@ -52,10 +50,17 @@ class _CountDownState extends State<CountDown> {
           currentActiveTime = setTime;
         }
       });
-    }, () => finalCountdown);
+    });
 
     currentActiveTimer = setTimer;
     currentActiveTime = setTime;
+  }
+
+  @override
+  void dispose() {
+    setTimer.dispose();
+    restTimer.dispose();
+    super.dispose();
   }
 
   @override
