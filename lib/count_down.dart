@@ -16,6 +16,7 @@ class CountDown extends StatefulWidget {
 }
 
 class _CountDownState extends State<CountDown> {
+  bool setActive = false;
   TimerState timerState = TimerState.stopped;
   int setTime = 30;
   int restTime = 10;
@@ -67,85 +68,105 @@ class _CountDownState extends State<CountDown> {
   Widget build(BuildContext context) {
     VariableSizing varSize = VariableSizing(context);
     return Scaffold(
-      appBar:
-          MediaQuery.of(context).orientation == Orientation.portrait
-              ? AppBar(actions: [SwitchDarkModeButton()])
-              : null,
-      body: Center(
-        child:
-            MediaQuery.of(context).orientation == Orientation.portrait
-                /////////////////////////
-                // portrait (vertical) //
-                /////////////////////////
-                ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MotivationalText(
-                      isRestPause: isRestPause,
-                      timerState: timerState,
-                      setCount: setCount,
-                    ),
-                    VisualTimer(
-                      currentActiveTime: currentActiveTime,
-                      currentActiveTimer: currentActiveTimer,
-                      timerState: timerState,
-                      isFinalCountdown: currentActiveTimer.isFinalCountdown(),
-                    ),
-                    TimerActions(
-                      timerState: timerState,
-                      currentActiveTimer: currentActiveTimer,
-                      onButtonPressed:
-                          (timerState) => setState(() {
-                            this.timerState = timerState;
-                          }),
-                    ),
-                  ],
-                )
-                ////////////////////////////
-                // landscape (horizontal) //
-                ////////////////////////////
-                : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: varSize.screenWidth / 2,
-                      child: Center(
-                        child: VisualTimer(
-                          currentActiveTimer: currentActiveTimer,
+      body: Stack(
+        children: [
+          Positioned(right: 16, top: 32, child: SwitchDarkModeButton()),
+          Center(
+            child:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    /////////////////////////
+                    // portrait (vertical) //
+                    /////////////////////////
+                    ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MotivationalText(
+                          isRestPause: isRestPause,
+                          timerState: timerState,
+                          setCount: setCount,
+                        ),
+                        VisualTimer(
                           currentActiveTime: currentActiveTime,
+                          currentActiveTimer: currentActiveTimer,
                           timerState: timerState,
                           isFinalCountdown: currentActiveTimer.isFinalCountdown(),
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: varSize.screenWidth / 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          MotivationalText(
-                            isRestPause: isRestPause,
-                            timerState: timerState,
-                            setCount: setCount,
+                        TimerActions(
+                          timerState: timerState,
+                          currentActiveTimer: currentActiveTimer,
+                          onButtonPressed:
+                              (timerState) => setState(() {
+                                if (timerState == TimerState.running && !setActive) {
+                                  setActive = true;
+                                }
+                                this.timerState = timerState;
+                              }),
+                        ),
+                      ],
+                    )
+                    ////////////////////////////
+                    // landscape (horizontal) //
+                    ////////////////////////////
+                    : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: varSize.screenWidth / 2,
+                          child: Center(
+                            child: VisualTimer(
+                              currentActiveTimer: currentActiveTimer,
+                              currentActiveTime: currentActiveTime,
+                              timerState: timerState,
+                              isFinalCountdown: currentActiveTimer.isFinalCountdown(),
+                            ),
                           ),
-                          TimerActions(
-                            timerState: timerState,
-                            currentActiveTimer: currentActiveTimer,
-                            onButtonPressed:
-                                (timerState) => setState(() {
-                                  this.timerState = timerState;
-                                }),
+                        ),
+                        SizedBox(
+                          width: varSize.screenWidth / 2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              MotivationalText(
+                                isRestPause: isRestPause,
+                                timerState: timerState,
+                                setCount: setCount,
+                              ),
+                              TimerActions(
+                                timerState: timerState,
+                                currentActiveTimer: currentActiveTimer,
+                                onButtonPressed:
+                                    (timerState) => setState(() {
+                                      if (timerState == TimerState.running && !setActive) {
+                                        setActive = true;
+                                      }
+                                      this.timerState = timerState;
+                                    }),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+          ),
+        ],
       ),
       floatingActionButton:
-          MediaQuery.of(context).orientation == Orientation.landscape
-              ? SwitchDarkModeButton()
-              : null,
+          setActive
+              ? FloatingActionButton(
+                onPressed:
+                    () => setState(() {
+                      setActive = false;
+                      timerState = TimerState.stopped;
+                      currentActiveTimer.stop();
+                      currentActiveTimer = setTimer;
+                      setCount = 1;
+                      currentActiveTime = setTime;
+                      isRestPause = false;
+                    }),
+                backgroundColor: Colors.red,
+                child: Icon(Icons.stop),
+              )
+              : FloatingActionButton(onPressed: () {}, child: Icon(Icons.more_time_sharp)),
     );
   }
 }
