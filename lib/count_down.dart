@@ -1,12 +1,13 @@
+import 'package:app_30_seconds_sets/enum.dart';
 import 'package:app_30_seconds_sets/func/timer_handler.dart';
 import 'package:app_30_seconds_sets/func/variable_sizing.dart';
+import 'package:app_30_seconds_sets/widget/change_time_popup.dart';
+import 'package:app_30_seconds_sets/widget/dialog/stop_set_dialog.dart';
 import 'package:app_30_seconds_sets/widget/motivational_text.dart';
 import 'package:app_30_seconds_sets/widget/switch_dark_mode_button.dart';
 import 'package:app_30_seconds_sets/widget/timer_actions.dart';
 import 'package:app_30_seconds_sets/widget/visual_timer.dart';
 import 'package:flutter/material.dart';
-
-enum TimerState { running, paused, stopped }
 
 class CountDown extends StatefulWidget {
   const CountDown({super.key});
@@ -18,18 +19,17 @@ class CountDown extends StatefulWidget {
 class _CountDownState extends State<CountDown> {
   bool setActive = false;
   TimerState timerState = TimerState.stopped;
-  int setTime = 30;
-  int restTime = 10;
+  int setTime = 10;
+  int restTime = 7;
   late int currentActiveTime;
-  late final TimerHandler setTimer;
-  late final TimerHandler restTimer;
+  late TimerHandler setTimer;
+  late TimerHandler restTimer;
   late TimerHandler currentActiveTimer;
   bool isRestPause = false;
   int setCount = 1;
+  int setLimit = 5;
 
-  @override
-  void initState() {
-    super.initState();
+  void _setTimers() {
     setTimer = TimerHandler(setTime, (isDone) {
       setState(() {
         if (isDone) {
@@ -58,6 +58,12 @@ class _CountDownState extends State<CountDown> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _setTimers();
+  }
+
+  @override
   void dispose() {
     setTimer.dispose();
     restTimer.dispose();
@@ -80,17 +86,8 @@ class _CountDownState extends State<CountDown> {
                     ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MotivationalText(
-                          isRestPause: isRestPause,
-                          timerState: timerState,
-                          setCount: setCount,
-                        ),
-                        VisualTimer(
-                          currentActiveTime: currentActiveTime,
-                          currentActiveTimer: currentActiveTimer,
-                          timerState: timerState,
-                          isFinalCountdown: currentActiveTimer.isFinalCountdown(),
-                        ),
+                        MotivationalText(isRestPause: isRestPause, timerState: timerState, setCount: setCount),
+                        VisualTimer(currentActiveTime: currentActiveTime, currentActiveTimer: currentActiveTimer, timerState: timerState, isFinalCountdown: currentActiveTimer.isFinalCountdown()),
                         TimerActions(
                           timerState: timerState,
                           currentActiveTimer: currentActiveTimer,
@@ -112,25 +109,14 @@ class _CountDownState extends State<CountDown> {
                       children: [
                         SizedBox(
                           width: varSize.screenWidth / 2,
-                          child: Center(
-                            child: VisualTimer(
-                              currentActiveTimer: currentActiveTimer,
-                              currentActiveTime: currentActiveTime,
-                              timerState: timerState,
-                              isFinalCountdown: currentActiveTimer.isFinalCountdown(),
-                            ),
-                          ),
+                          child: Center(child: VisualTimer(currentActiveTimer: currentActiveTimer, currentActiveTime: currentActiveTime, timerState: timerState, isFinalCountdown: currentActiveTimer.isFinalCountdown())),
                         ),
                         SizedBox(
                           width: varSize.screenWidth / 2,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              MotivationalText(
-                                isRestPause: isRestPause,
-                                timerState: timerState,
-                                setCount: setCount,
-                              ),
+                              MotivationalText(isRestPause: isRestPause, timerState: timerState, setCount: setCount),
                               TimerActions(
                                 timerState: timerState,
                                 currentActiveTimer: currentActiveTimer,
@@ -154,19 +140,45 @@ class _CountDownState extends State<CountDown> {
           setActive
               ? FloatingActionButton(
                 onPressed:
-                    () => setState(() {
-                      setActive = false;
-                      timerState = TimerState.stopped;
-                      currentActiveTimer.stop();
-                      currentActiveTimer = setTimer;
-                      setCount = 1;
-                      currentActiveTime = setTime;
-                      isRestPause = false;
+                    () => stopSetDialog(context).then((value) {
+                      if (value != null && value != StopSetDialogResult.cancel) {
+                        setState(() {
+                          setActive = false;
+                          timerState = TimerState.stopped;
+                          currentActiveTimer.stop();
+                          currentActiveTimer = setTimer;
+                          setCount = 1;
+                          currentActiveTime = setTime;
+                          isRestPause = false;
+                        });
+                      }
                     }),
+
+                // setState(() {
+                //   setActive = false;
+                //   timerState = TimerState.stopped;
+                //   currentActiveTimer.stop();
+                //   currentActiveTimer = setTimer;
+                //   setCount = 1;
+                //   currentActiveTime = setTime;
+                //   isRestPause = false;
+                // }),
                 backgroundColor: Colors.red,
                 child: Icon(Icons.stop),
               )
-              : FloatingActionButton(onPressed: () {}, child: Icon(Icons.more_time_sharp)),
+              : FloatingActionButton(
+                onPressed: () {
+                  changeTimePopup(context, setTime, restTime, setLimit).then((values) {
+                    setState(() {
+                      setTime = values[0];
+                      restTime = values[1];
+                      setLimit = values[2];
+                      _setTimers();
+                    });
+                  });
+                },
+                child: Icon(Icons.more_time_sharp),
+              ),
     );
   }
 }

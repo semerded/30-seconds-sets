@@ -1,4 +1,4 @@
-import 'package:app_30_seconds_sets/count_down.dart';
+import 'package:app_30_seconds_sets/enum.dart';
 import 'package:app_30_seconds_sets/func/variable_sizing.dart';
 import 'package:flutter/material.dart';
 
@@ -6,12 +6,7 @@ class MotivationalText extends StatelessWidget {
   final bool isRestPause;
   final TimerState timerState;
   final int setCount;
-  const MotivationalText({
-    super.key,
-    required this.isRestPause,
-    required this.timerState,
-    required this.setCount,
-  });
+  const MotivationalText({super.key, required this.isRestPause, required this.timerState, required this.setCount});
 
   @override
   Widget build(BuildContext context) {

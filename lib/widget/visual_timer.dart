@@ -1,4 +1,4 @@
-import 'package:app_30_seconds_sets/count_down.dart';
+import 'package:app_30_seconds_sets/enum.dart';
 import 'package:app_30_seconds_sets/func/timer_handler.dart';
 import 'package:app_30_seconds_sets/func/variable_sizing.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +10,7 @@ class VisualTimer extends StatefulWidget {
   final TimerState timerState;
   final bool isFinalCountdown;
 
-  const VisualTimer({
-    super.key,
-    required this.currentActiveTimer,
-    required this.currentActiveTime,
-    required this.timerState,
-    required this.isFinalCountdown,
-  });
+  const VisualTimer({super.key, required this.currentActiveTimer, required this.currentActiveTime, required this.timerState, required this.isFinalCountdown});
 
   @override
   State<VisualTimer> createState() => _VisualTimerState();
@@ -29,8 +23,7 @@ class _VisualTimerState extends State<VisualTimer> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))
-      ..repeat(reverse: true);
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat(reverse: true);
   }
 
   @override
@@ -45,10 +38,7 @@ class _VisualTimerState extends State<VisualTimer> with SingleTickerProviderStat
     final varSize = VariableSizing(context);
     final theme = Theme.of(context);
 
-    _animation = Tween<double>(
-      begin: varSize.timerRadius,
-      end: varSize.timerRadius + 8,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad));
+    _animation = Tween<double>(begin: varSize.timerRadius, end: varSize.timerRadius + 8).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInQuad));
 
     if (!widget.isFinalCountdown) {
       _controller.reverse(from: _controller.value);
@@ -64,20 +54,11 @@ class _VisualTimerState extends State<VisualTimer> with SingleTickerProviderStat
             radius: _animation.value,
             lineWidth: 12,
             percent: widget.currentActiveTimer.getElapsedTime() / widget.currentActiveTime,
-            progressColor:
-                widget.currentActiveTimer.isFinalCountdown()
-                    ? Colors.red
-                    : theme.colorScheme.primary,
+            progressColor: widget.currentActiveTimer.isFinalCountdown() ? Colors.red : theme.colorScheme.primary,
             animation: true,
             animateFromLastPercent: true,
-            animationDuration:
-                widget.timerState == TimerState.stopped
-                    ? 400
-                    : widget.currentActiveTimer.timerInterval,
-            center: Text(
-              widget.currentActiveTimer.getElapsedTimeInSeconds().toString(),
-              style: TextStyle(fontSize: varSize.timerText),
-            ),
+            animationDuration: widget.timerState == TimerState.stopped ? 400 : widget.currentActiveTimer.timerInterval,
+            center: Text(widget.currentActiveTimer.getElapsedTimeInSeconds().toString(), style: TextStyle(fontSize: varSize.timerText)),
           ),
     );
   }

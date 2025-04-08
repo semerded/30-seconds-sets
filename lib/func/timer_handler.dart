@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:app_30_seconds_sets/func/final_count_down_player.dart';
+import 'package:app_30_seconds_sets/func/sound_player.dart';
 
 typedef OnTick = void Function(bool isDone);
 
@@ -15,7 +15,7 @@ class TimerHandler {
 
   int finalCountDownCount = 0;
 
-  final FinalCountDownPlayer finalCountDownPlayer = FinalCountDownPlayer();
+  final SoundPlayer soundPlayer = SoundPlayer();
 
   TimerHandler(this.time, this.callback) {
     assert(time > 0);
@@ -25,16 +25,17 @@ class TimerHandler {
   void _callback(Timer timer) {
     intervalCount += 1;
 
-    if (isFinalCountdown() && intervalCount % (1000 / timerInterval) == 0) {
-      finalCountDownPlayer.playFinalCountDown();
-    }
-
     if (tickLimit != null && intervalCount >= tickLimit!) {
       stop();
-      finalCountDownPlayer.playDone();
+      soundPlayer.playDone();
       callback(true);
+      return;
     } else {
       callback(false);
+    }
+
+    if (isFinalCountdown() && intervalCount % (1000 / timerInterval) == 0) {
+      soundPlayer.playFinalCountDown();
     }
   }
 
@@ -64,7 +65,9 @@ class TimerHandler {
   }
 
   void dispose() {
-    _timer!.cancel();
-    finalCountDownPlayer.dispose();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    soundPlayer.dispose();
   }
 }
