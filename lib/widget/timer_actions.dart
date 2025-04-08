@@ -1,4 +1,4 @@
-import 'package:app_30_seconds_sets/count_down.dart';
+import 'package:app_30_seconds_sets/enum.dart';
 import 'package:app_30_seconds_sets/func/timer_handler.dart';
 import 'package:flutter/material.dart';
 
@@ -9,12 +9,7 @@ class TimerActions extends StatefulWidget {
   final TimerHandler currentActiveTimer;
   final OnButtonPressed onButtonPressed;
 
-  const TimerActions({
-    super.key,
-    required this.timerState,
-    required this.currentActiveTimer,
-    required this.onButtonPressed,
-  });
+  const TimerActions({super.key, required this.timerState, required this.currentActiveTimer, required this.onButtonPressed});
 
   @override
   State<TimerActions> createState() => _TimerActionsState();
