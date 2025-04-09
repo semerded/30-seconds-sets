@@ -1,4 +1,4 @@
-import 'package:app_30_seconds_sets/count_down.dart';
+import 'package:app_30_seconds_sets/pages/count_down.dart';
 import 'package:app_30_seconds_sets/data.dart';
 import 'package:flutter/material.dart';
 
@@ -31,12 +31,7 @@ class MainApp extends StatelessWidget {
               error: Colors.red,
               onError: Colors.white,
             ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(Palette.buttonLight),
-                foregroundColor: WidgetStatePropertyAll(Palette.secondary),
-              ),
-            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Palette.buttonLight), foregroundColor: WidgetStatePropertyAll(Palette.secondary))),
           ),
           darkTheme: ThemeData(
             primaryColor: Palette.primary,
@@ -53,12 +48,7 @@ class MainApp extends StatelessWidget {
               error: Colors.red,
               onError: Palette.textLight,
             ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(Palette.buttonDark),
-                foregroundColor: WidgetStatePropertyAll(Palette.primary),
-              ),
-            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Palette.buttonDark), foregroundColor: WidgetStatePropertyAll(Palette.primary))),
           ),
           themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
         );

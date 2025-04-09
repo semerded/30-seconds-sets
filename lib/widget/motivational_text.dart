@@ -6,7 +6,8 @@ class MotivationalText extends StatelessWidget {
   final bool isRestPause;
   final TimerState timerState;
   final int setCount;
-  const MotivationalText({super.key, required this.isRestPause, required this.timerState, required this.setCount});
+  final bool setActive;
+  const MotivationalText({super.key, required this.isRestPause, required this.timerState, required this.setCount, required this.setActive});
 
   @override
   Widget build(BuildContext context) {
@@ -15,17 +16,20 @@ class MotivationalText extends StatelessWidget {
       () {
         if (isRestPause) {
           if (timerState == TimerState.running) {
-            return "Set $setCount voltooid\nNu even rusten...";
+            return "Set voltooid, even rusten...";
           } else {
-            return "Rustpause voor set $setCount gepauseerd \nLangere rustpause nodig?";
+            return "Rustpause gepauseerd";
           }
         } else {
           if (timerState == TimerState.stopped) {
-            return "Start set $setCount";
+            if (setActive) {
+              return "Start met je set";
+            }
+            return "Start je training";
           } else if (timerState == TimerState.paused) {
-            return "Set $setCount gepauseerd\nVlieg snel terug in actie!";
+            return "Gepauseerd, Vlieg snel terug in actie!";
           } else {
-            return "Bezig met set $setCount\nBlijf zo doorgaan!";
+            return "Blijf zo doorgaan!";
           }
         }
       }(),

@@ -1,9 +1,11 @@
 import 'package:app_30_seconds_sets/enum.dart';
 import 'package:app_30_seconds_sets/func/timer_handler.dart';
 import 'package:app_30_seconds_sets/func/variable_sizing.dart';
+import 'package:app_30_seconds_sets/pages/sets_completed.dart';
 import 'package:app_30_seconds_sets/widget/change_time_popup.dart';
 import 'package:app_30_seconds_sets/widget/dialog/stop_set_dialog.dart';
 import 'package:app_30_seconds_sets/widget/motivational_text.dart';
+import 'package:app_30_seconds_sets/widget/set_text.dart';
 import 'package:app_30_seconds_sets/widget/switch_dark_mode_button.dart';
 import 'package:app_30_seconds_sets/widget/timer_actions.dart';
 import 'package:app_30_seconds_sets/widget/visual_timer.dart';
@@ -37,7 +39,6 @@ class _CountDownState extends State<CountDown> {
           restTimer.start();
           currentActiveTimer = restTimer;
           currentActiveTime = restTime;
-          setCount++;
         }
       });
     });
@@ -45,10 +46,26 @@ class _CountDownState extends State<CountDown> {
     restTimer = TimerHandler(restTime, (isDone) {
       setState(() {
         if (isDone) {
-          isRestPause = false;
-          setTimer.start();
-          currentActiveTimer = setTimer;
-          currentActiveTime = setTime;
+          setCount++;
+
+          if (setCount > setLimit && setLimit != 0) {
+            Navigator.push(context, MaterialPageRoute<bool>(builder: (context) => const SetsCompleted())).then((callback) {
+              setState(() {
+                setActive = false;
+                timerState = TimerState.stopped;
+                currentActiveTimer.stop();
+                currentActiveTimer = setTimer;
+                setCount = 1;
+                currentActiveTime = setTime;
+                isRestPause = false;
+              });
+            });
+          } else {
+            isRestPause = false;
+            setTimer.start();
+            currentActiveTimer = setTimer;
+            currentActiveTime = setTime;
+          }
         }
       });
     });
@@ -86,8 +103,13 @@ class _CountDownState extends State<CountDown> {
                     ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        MotivationalText(isRestPause: isRestPause, timerState: timerState, setCount: setCount),
+                        Spacer(flex: 4),
+                        SetText(setCount: setCount, setLimit: setLimit, isRestPause: isRestPause),
+                        Spacer(flex: 1),
+                        MotivationalText(isRestPause: isRestPause, timerState: timerState, setCount: setCount, setActive: setActive),
+                        Spacer(flex: 1),
                         VisualTimer(currentActiveTime: currentActiveTime, currentActiveTimer: currentActiveTimer, timerState: timerState, isFinalCountdown: currentActiveTimer.isFinalCountdown()),
+                        Spacer(flex: 1),
                         TimerActions(
                           timerState: timerState,
                           currentActiveTimer: currentActiveTimer,
@@ -99,6 +121,7 @@ class _CountDownState extends State<CountDown> {
                                 this.timerState = timerState;
                               }),
                         ),
+                        Spacer(flex: 4),
                       ],
                     )
                     ////////////////////////////
@@ -116,7 +139,8 @@ class _CountDownState extends State<CountDown> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              MotivationalText(isRestPause: isRestPause, timerState: timerState, setCount: setCount),
+                              SetText(setCount: setCount, setLimit: setLimit, isRestPause: isRestPause),
+                              MotivationalText(isRestPause: isRestPause, timerState: timerState, setCount: setCount, setActive: setActive),
                               TimerActions(
                                 timerState: timerState,
                                 currentActiveTimer: currentActiveTimer,
@@ -153,16 +177,6 @@ class _CountDownState extends State<CountDown> {
                         });
                       }
                     }),
-
-                // setState(() {
-                //   setActive = false;
-                //   timerState = TimerState.stopped;
-                //   currentActiveTimer.stop();
-                //   currentActiveTimer = setTimer;
-                //   setCount = 1;
-                //   currentActiveTime = setTime;
-                //   isRestPause = false;
-                // }),
                 backgroundColor: Colors.red,
                 child: Icon(Icons.stop),
               )

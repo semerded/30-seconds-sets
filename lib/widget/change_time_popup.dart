@@ -20,7 +20,7 @@ Future<List<int>> changeTimePopup(BuildContext context, int setTime, int restTim
                       Spacer(flex: 5),
                       IconButton(
                         onPressed: () {
-                          setState(() => setTime -= 1);
+                          setState(() => setTime -= setTime == 5 ? 0 : 1);
                         },
                         icon: Icon(Icons.remove, size: 48),
                       ),
@@ -44,7 +44,7 @@ Future<List<int>> changeTimePopup(BuildContext context, int setTime, int restTim
                       Spacer(flex: 5),
                       IconButton(
                         onPressed: () {
-                          setState(() => restTime -= 1);
+                          setState(() => restTime -= restTime == 5 ? 0 : 1);
                         },
                         icon: Icon(Icons.remove, size: 48),
                       ),
@@ -68,12 +68,12 @@ Future<List<int>> changeTimePopup(BuildContext context, int setTime, int restTim
                       SizedBox(width: 64),
                       IconButton(
                         onPressed: () {
-                          setState(() => setLimit -= 1);
+                          setState(() => setLimit -= setLimit == 0 ? 0 : 1);
                         },
                         icon: Icon(Icons.remove, size: 48),
                       ),
                       Spacer(flex: 1),
-                      SizedBox(width: 48, child: Text(setLimit.toString(), style: TextStyle(fontSize: 32), textAlign: TextAlign.center)),
+                      SizedBox(width: 48, child: Text(setLimit == 0 ? "∞" : setLimit.toString(), style: TextStyle(fontSize: 32), textAlign: TextAlign.center)),
                       Spacer(flex: 1),
                       IconButton(
                         onPressed: () {

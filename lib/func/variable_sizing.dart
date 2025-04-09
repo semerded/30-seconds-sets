@@ -5,10 +5,7 @@ class VariableSizing {
 
   VariableSizing(this.context);
 
-  double get mainScreenSize =>
-      MediaQuery.of(context).orientation == Orientation.portrait
-          ? MediaQuery.of(context).size.width
-          : MediaQuery.of(context).size.height;
+  double get mainScreenSize => MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.width : MediaQuery.of(context).size.height;
 
   double get screenWidth => MediaQuery.of(context).size.width;
 
@@ -18,7 +15,7 @@ class VariableSizing {
 
   double get timerRadius => mainScreenSize / 2 - 32;
 
-  double get bigText => mainScreenSize / 19;
+  double get bigText => mainScreenSize / 24;
 
   double get buttonText => mainScreenSize / 32;
 }
